@@ -1,8 +1,8 @@
-## init
-sum = 0
+def f(n):
+    sum = 0
+    for i in range(1, n + 1):
+        sum += i
+    print(sum)
 
-## for loop
-for i in range(1, 11):
-    sum += i ** 2
 
-print(sum)
+f(10)
