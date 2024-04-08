@@ -1,8 +1,7 @@
-def f(n):
+def calculate_even_sum(n):
     sum = 0
-    for i in range(1, n + 1):
+    for i in range(2, n + 1, 2):
         sum += i
     print(sum)
 
-
-f(10)
+calculate_even_sum(10)
