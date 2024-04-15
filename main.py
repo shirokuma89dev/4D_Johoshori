@@ -1,7 +1,8 @@
-def calculate_even_sum(n):
-    sum = 0
-    for i in range(2, n + 1, 2):
-        sum += i
-    print(sum)
+import numpy as np
 
-calculate_even_sum(10)
+origin = 0.5
+dest = 2.0
+step = 0.5
+
+for rad in np.arange(origin, dest + step, step):
+    print(rad, "[rad]:", np.sin(rad))
