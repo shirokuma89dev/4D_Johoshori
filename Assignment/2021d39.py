@@ -1,11 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-RANGE = 5
-STEP = 0.1
+degrees = np.arange(0, 361, 1)
+radians = np.deg2rad(degrees)
 
-x = np.arange(-RANGE, RANGE + STEP, STEP)
-y = [i**2 for i in x]
+sin_values = np.sin(radians)
+cos_values = np.cos(radians)
 
-plt.plot(x, y)
+figure = plt.figure()
+
+sin_figure = figure.add_subplot(2, 1, 1)
+sin_figure.plot(degrees, sin_values)
+
+cos_figure = figure.add_subplot(2, 1, 2)
+cos_figure.plot(degrees, cos_values)
+
 plt.show()
