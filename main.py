@@ -1,11 +1,11 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
-def quartic(x):
-    return x, x ** 4
+RANGE = 5
+STEP = 0.1
 
-dest = 1.0
-step = 0.1
-arr = np.arange(0, dest, step)
+x = np.arange(-RANGE, RANGE + STEP, STEP)
+y = [i**2 for i in x]
 
-for i in arr:
-    print(quartic(i))
+plt.plot(x, y)
+plt.show()
