@@ -1,8 +1,11 @@
 import numpy as np
 
-origin = 0.5
-dest = 2.0
-step = 0.5
+def quartic(x):
+    return x, x ** 4
 
-for rad in np.arange(origin, dest + step, step):
-    print(rad, "[rad]:", np.sin(rad))
+dest = 1.0
+step = 0.1
+arr = np.arange(0, dest, step)
+
+for i in arr:
+    print(quartic(i))
