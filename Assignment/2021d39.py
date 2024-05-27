@@ -1,54 +1,77 @@
 import numpy as np
-import matplotlib.pyplot as plt
+
+# 係数行列と定数ベクトルを含む行列
+aa = np.array([[1e-13, 30, 40, 50], [20, 300, 20, 50], [30, 40, 40, 10]])
 
 
-def taylor_sin(phase, n):
-    result = phase
-    term = phase
-    EPS = 1.0e-8
+def gauss_jordan(matrix):
+    matrix = matrix.copy()
+    n = len(matrix)
 
-    for i in range(0, n, 2):
-        old_result = result
-        term *= -phase * phase / (i + 2) / (i + 3)
-        result += term
+    # 上三角行列へ変形
+    for i in range(n):
+        matrix[i] = matrix[i] / matrix[i, i]  # 正規化
 
-        if np.abs(old_result - result) < (EPS * np.abs(old_result)):
-            return result
+        for j in range(i + 1, n):
+            matrix[j] -= matrix[i] * matrix[j, i]
 
-    if np.abs(result) < EPS:
-        return result
-    else:
-        return np.nan
+    # 後退代入フェーズ
+    for i in range(n - 1, -1, -1):
+        for j in range(i - 1, -1, -1):
+            matrix[j] -= matrix[i] * matrix[j, i]
 
-print('x'.center(10), 'Taylor sin(x)'.rjust(25), 'numpy sin(x)'.rjust(25))
-print("-" * 62)
+    return matrix[:, -1]
 
-for x in range(0, 181, 10):
-    x_rad = np.radians(x)
-    taylor = taylor_sin(x_rad, 200)
-    numpy_sin = np.sin(x_rad)
 
-    print(str(x).center(10), str(taylor).rjust(25), str(numpy_sin).rjust(25))
+def pivot_gauss_jordan(matrix):
+    matrix = matrix.copy()
+    n = len(matrix)
 
-## Result ##
-#     x                  Taylor sin(x)              numpy sin(x)
-# --------------------------------------------------------------
-#     0                            0.0                       0.0
-#     10           0.17364817766651633       0.17364817766693033
-#     20           0.34202014332590347        0.3420201433256687
-#     30            0.4999999999999643       0.49999999999999994
-#     40            0.6427876096850399        0.6427876096865393
-#     50            0.7660444430917407         0.766044443118978
-#     60            0.8660254037859597        0.8660254037844386
-#     70            0.9396926208012458        0.9396926207859083
-#     80            0.9848077530113933         0.984807753012208
-#     90            0.9999999999939768                       1.0
-#    100            0.9848077529761511         0.984807753012208
-#    110            0.9396926207878726        0.9396926207859084
-#    120            0.8660254037946835        0.8660254037844387
-#    130            0.7660444431657727         0.766044443118978
-#    140            0.6427876096838189        0.6427876096865395
-#    150            0.4999999999884349       0.49999999999999994
-#    160            0.3420201432809031        0.3420201433256689
-#    170           0.17364817766971424       0.17364817766693028
-#    180         2.479060653624965e-16    1.2246467991473532e-16
+    # 上三角行列へ変形
+    for i in range(n):
+
+        # ピボットを選択
+        max_val = 0
+        pivot = i
+        for j in range(i, n):
+            if abs(matrix[j, i]) > max_val:
+                max_val = abs(matrix[j, i])
+
+            pivot = j
+
+        # ピボット行を交換
+        matrix[[i, pivot]] = matrix[[pivot, i]]
+
+        matrix[i] = matrix[i] / matrix[i, i]  # 正規化
+        for j in range(i + 1, n):
+            matrix[j] -= matrix[i] * matrix[j, i]
+
+    # 後退代入フェーズ
+    for i in range(n - 1, -1, -1):
+        for j in range(i - 1, -1, -1):
+            matrix[j] -= matrix[i] * matrix[j, i]
+
+    return matrix[:, -1]
+
+
+print("ガウス・ジョルダン法:")
+try:
+    x = gauss_jordan(aa)
+    print(x)
+except Exception as e:
+    print(e)
+
+print("\nピボット選択法:")
+try:
+    x = pivot_gauss_jordan(aa)
+    print(x)
+except Exception as e:
+    print(e)
+
+
+## result
+## ガウス・ジョルダン法:
+## [-1.390625    0.18996416  1.10752688]
+## 
+## ピボット選択法:
+## [-1.39520958  0.18562874  1.11077844]
