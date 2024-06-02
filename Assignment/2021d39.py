@@ -21,29 +21,23 @@ def pivot_gauss_jordan(matrix):
     matrix = matrix.copy()
     n = len(matrix)
 
-    # 上三角行列へ変形
     for i in range(n):
-
-        # ピボットを選択
-        max_val = 0
+        ## ピボット選択
         pivot = i
+        val_max = 0
+
         for j in range(i, n):
-            if abs(matrix[j, i]) > max_val:
-                max_val = abs(matrix[j, i])
+            if abs(matrix[j, i]) > val_max:
+                val_max = abs(matrix[j, i])
+                pivot = j
 
-            pivot = j
-
-        # ピボット行を交換
         matrix[[i, pivot]] = matrix[[pivot, i]]
 
-        matrix[i] = matrix[i] / matrix[i, i]  # 正規化
-        for j in range(i + 1, n):
-            matrix[j] -= matrix[i] * matrix[j, i]
+        matrix[i] = matrix[i] / matrix[i, i]
 
-    # 後退代入フェーズ
-    for i in range(n - 1, -1, -1):
-        for j in range(i - 1, -1, -1):
-            matrix[j] -= matrix[i] * matrix[j, i]
+        for j in range(n):
+            if i != j:
+                matrix[j] -= matrix[i] * matrix[j, i]
 
     return matrix[:, -1]
 
