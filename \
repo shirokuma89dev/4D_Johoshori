@@ -1,0 +1,26 @@
+import numpy as np
+
+# input the number of elements
+n = input("Enter the number of elements: ")
+
+if (not n.isdigit()):
+    print("Invalid input")
+    exit()
+
+n = int(n)
+
+# generate random array
+arr = [random.randint(1, 1000) for i in range(int(n))]
+
+# sort the array
+for i in range(n - 1):
+    max_val = arr[i]
+    max_index = i   
+    for j in range(i, n - 2):
+        if arr[j] > max_val:
+            max_index = j
+            max_val = arr[j]
+
+        arr[j], arr[i] = arr[i], arr[j]
+
+print("Sorted array: ", arr)

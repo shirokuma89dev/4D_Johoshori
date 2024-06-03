@@ -1,65 +1,38 @@
 import numpy as np
+import random
 
-# 係数行列と定数ベクトルを含む行列
-aa = np.array([[1e-13, 30, 40, 50], [20, 300, 20, 50], [30, 40, 40, 10]])
+# input the number of elements
+n = input("Enter the number of elements: ")
 
+if (not n.isdigit()):
+    print("Invalid input")
+    exit()
 
-def gauss_jordan(matrix):
-    matrix = matrix.copy()
-    n = len(matrix)
+n = int(n)
 
-    for i in range(n):
-        matrix[i] = matrix[i] / matrix[i, i]
-        for j in range(n):
-            if i != j:
-                matrix[j] -= matrix[i] * matrix[j, i]
+# generate random array
+arr = [random.randint(0, 1000) for i in range(n)]
 
-    return matrix[:, -1]
+# sort the array
+for i in range(n - 1):
+    min_val = arr[i]
+    min_index = i   
+    for j in range(i + 1, n):
+        if arr[j] < min_val:
+            min_val = arr[j]
+            min_index = j
 
+    arr[min_index], arr[i] = arr[i], arr[min_index]
 
-def pivot_gauss_jordan(matrix):
-    matrix = matrix.copy()
-    n = len(matrix)
+# ascending or descending
+order = input("Enter 'asc' for ascending or 'desc' for descending: ")
 
-    for i in range(n):
-        ## ピボット選択
-        pivot = i
-        val_max = 0
+if not (order == "asc" or order == "desc"):
+    print("Invalid input")
+    exit()
 
-        for j in range(i, n):
-            if abs(matrix[j, i]) > val_max:
-                val_max = abs(matrix[j, i])
-                pivot = j
+# reverse the array if descending:
+if order == "desc":
+    arr = arr[::-1]
 
-        matrix[[i, pivot]] = matrix[[pivot, i]]
-
-        matrix[i] = matrix[i] / matrix[i, i]
-
-        for j in range(n):
-            if i != j:
-                matrix[j] -= matrix[i] * matrix[j, i]
-
-    return matrix[:, -1]
-
-
-print("ガウス・ジョルダン法:")
-try:
-    x = gauss_jordan(aa)
-    print(x)
-except Exception as e:
-    print(e)
-
-print("\nピボット選択法:")
-try:
-    x = pivot_gauss_jordan(aa)
-    print(x)
-except Exception as e:
-    print(e)
-
-
-## result
-# ガウス・ジョルダン法:
-# [-1.45698925  0.18996416  1.10752688]
-#
-# ピボット選択法:
-# [-1.39520958  0.18562874  1.11077844]
+print("Sorted array: ", arr)
