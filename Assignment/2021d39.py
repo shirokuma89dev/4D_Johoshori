@@ -1,39 +1,51 @@
-import numpy as np
 import random
+import numpy as np
+import time
 
-# input the number of elements
-n = input("Enter the number of elements: ")
+arr_num = 50000
+ref_arr = [random.randint(i, arr_num) for i in range(arr_num)]
 
-if (not n.isdigit()):
-    print("Invalid input")
-    exit()
+def shell_sort(gap, array):
+    while gap > 0:
+        for k in range(gap):
+            for i in range(k + gap, len(array), gap):
+                for j in range(i - gap, k - 1, -gap):
+                    if array[j] > array[j + gap]:
+                        array[j], array[j + gap] = array[j + gap], array[j]
+                    else:
+                        break
 
-n = int(n)
+        gap //= 2
 
-# generate random array
-arr = [random.randint(0, n - 1) for i in range(n)]
+def measure_sort_time(N, num_trials = 20):
+    print('N =', N)
+    times = []
+    for i in range(num_trials):
+        arr = ref_arr.copy()
 
-# sort the array
-for i in range(n - 1):
-    min_val = arr[i]
-    min_index = i   
-    for j in range(i + 1, n):
-        if arr[j] < min_val:
-            min_val = arr[j]
-            min_index = j
+        start_time = time.time()
+        print("Start time: ", start_time)
+        
+        shell_sort(int(len(arr) / N), arr)
+        
+        end_time = time.time()
+        times.append(end_time - start_time)
 
-    arr[min_index], arr[i] = arr[i], arr[min_index]
+    return np.mean(times)
 
-# ascending or descending
-order = input("Enter 'asc' for ascending or 'desc' for descending: ")
+n_values = np.arange(2, 5.1, 0.3)
+sort_times = [measure_sort_time(n) for n in n_values]
 
-if not (order == "asc" or order == "desc"):
-    print("Invalid input")
-    exit()
+## print the results as a table
+print('N\tTime')
+for n, time in zip(n_values, sort_times):
+    print('{}\t{}'.format(n, time))
 
-# reverse the array if descending:
-if order == "desc":
-    arr = arr[::-1]
+## plot the results
+import matplotlib.pyplot as plt
+plt.plot(n_values, sort_times)
+plt.xlabel('N')
+plt.ylabel('Time (s)')
+plt.title('Shell Sort Time')
+plt.show()
 
-print("Sorted array: ", arr)
-print("✅😀 Done! Happy Coding!")
