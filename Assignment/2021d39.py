@@ -11,7 +11,7 @@ if (not n.isdigit()):
 n = int(n)
 
 # generate random array
-arr = [random.randint(0, 1000) for i in range(n)]
+arr = [random.randint(0, n - 1) for i in range(n)]
 
 # sort the array
 for i in range(n - 1):
@@ -36,3 +36,4 @@ if order == "desc":
     arr = arr[::-1]
 
 print("Sorted array: ", arr)
+print("✅😀 Done! Happy Coding!")
