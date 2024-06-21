@@ -2,38 +2,54 @@ import random
 import numpy as np
 import time
 
-arr_num = 50000
-ref_arr = [random.randint(i, arr_num) for i in range(arr_num)]
+arr_num = 100000
+ref_arr = []
 
-def shell_sort(gap, array):
+for i in range(20):
+    ref_arr.append([random.randint(i, arr_num) for i in range(arr_num)])
+
+def shell_sort(N, array):
+    gap = int(len(array) / N)
+
     while gap > 0:
-        for k in range(gap):
-            for i in range(k + gap, len(array), gap):
-                for j in range(i - gap, k - 1, -gap):
+        for group in range(gap):
+            for i in range(group + gap, len(array), gap):
+                for j in range(i - gap, group - 1, -gap):
                     if array[j] > array[j + gap]:
                         array[j], array[j + gap] = array[j + gap], array[j]
                     else:
                         break
 
-        gap //= 2
+        gap = int(gap / N)
+    
+    # 最後に一回以上、gapが1の挿入ソートを行わないとソートを保証できない
+    for i in range(1, len(array)):
+        for j in range(i, 0, -1):
+            if array[j] < array[j - 1]:
+                array[j], array[j - 1] = array[j - 1], array[j]
+            else:
+                break
+
+    # print("Sorted array: ", array)
 
 def measure_sort_time(N, num_trials = 20):
     print('N =', N)
     times = []
     for i in range(num_trials):
-        arr = ref_arr.copy()
+        arr = ref_arr[i].copy()
 
         start_time = time.time()
         print("Start time: ", start_time)
         
-        shell_sort(int(len(arr) / N), arr)
+        shell_sort(N, arr)
         
         end_time = time.time()
         times.append(end_time - start_time)
+    print(arr)
 
     return np.mean(times)
 
-n_values = np.arange(2, 5.1, 0.3)
+n_values = np.linspace(2, 5, int((5 - 2) / 0.3 + 1))
 sort_times = [measure_sort_time(n) for n in n_values]
 
 ## print the results as a table
