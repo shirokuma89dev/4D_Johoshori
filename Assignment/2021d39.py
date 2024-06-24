@@ -1,67 +1,52 @@
-import random
-import numpy as np
-import time
+# 概要:
+# 1. 文字列の中のアルファベット以外をスペースに置き換える
+# 2. 文字列の末尾に" "を追加する
+# 3. keyに" "を追加する
+# 4. 検索を行う
 
-arr_num = 100000
-ref_arr = []
+skip = [0 for i in range(256)]
 
-for i in range(20):
-    ref_arr.append([random.randint(i, arr_num) for i in range(arr_num)])
+def table(key):
+    key = key + " "
+    keyLength = len(key)
 
-def shell_sort(N, array):
-    gap = int(len(array) / N)
+    for k in range(256):
+        skip[k] = keyLength
 
-    while gap > 0:
-        for group in range(gap):
-            for i in range(group + gap, len(array), gap):
-                for j in range(i - gap, group - 1, -gap):
-                    if array[j] > array[j + gap]:
-                        array[j], array[j + gap] = array[j + gap], array[j]
-                    else:
-                        break
-
-        gap = int(gap / N)
+    for k in range(keyLength - 1):
+        skip[ord(key[k])] = keyLength - 1 - k
     
-    # 最後に一回以上、gapが1の挿入ソートを行わないとソートを保証できない
-    for i in range(1, len(array)):
-        for j in range(i, 0, -1):
-            if array[j] < array[j - 1]:
-                array[j], array[j - 1] = array[j - 1], array[j]
-            else:
-                break
+    return key
 
-    # print("Sorted array: ", array)
 
-def measure_sort_time(N, num_trials = 20):
-    print('N =', N)
-    times = []
-    for i in range(num_trials):
-        arr = ref_arr[i].copy()
+def search(s, text, key):
+    keyLength = len(key)
 
-        start_time = time.time()
-        print("Start time: ", start_time)
-        
-        shell_sort(N, arr)
-        
-        end_time = time.time()
-        times.append(end_time - start_time)
-    print(arr)
+    # If not alphabetic (number, symbol, whitespace, etc.),
+    # replace with a space:
+    for i in range(len(text)):
+        if not text[i].isalpha():
+            text = text[:i] + " " + text[i + 1 :]
 
-    return np.mean(times)
+    text = text + " "  # Append a space to the end of the text
 
-n_values = np.linspace(2, 5, int((5 - 2) / 0.3 + 1))
-sort_times = [measure_sort_time(n) for n in n_values]
+    currentIndex = s + keyLength - 1
 
-## print the results as a table
-print('N\tTime')
-for n, time in zip(n_values, sort_times):
-    print('{}\t{}'.format(n, time))
+    while currentIndex < len(text):
+        if text[currentIndex] == key[keyLength - 1]:
+            if text[currentIndex - keyLength + 1 : currentIndex + 1] == key:
+                return currentIndex - keyLength + 1
 
-## plot the results
-import matplotlib.pyplot as plt
-plt.plot(n_values, sort_times)
-plt.xlabel('N')
-plt.ylabel('Time (s)')
-plt.title('Shell Sort Time')
-plt.show()
+        currentIndex += skip[ord(text[currentIndex])]
 
+    return -1
+
+
+text = "This is a pen. That is a pencil."
+key = "pen"
+key = table(key)
+
+found_index = search(0, text, key)
+while found_index != -1:
+    print("{:s}".format(text[found_index:]))
+    found_index = search(found_index + len(key), text, key)
