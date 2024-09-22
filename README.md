@@ -1,6 +1,6 @@
 # 4D_Johoshori
 
-情報処理の作業ディレクトリ
+情報処理の作業ディレクトリ。課題に困ったら参考にしていいよ。
 
 ## How to use
 
@@ -8,7 +8,7 @@
 
 ターミナル（コマンドプロンプト）で以下のコマンドを叩いたら必要なパッケージが全部入る。
 
-**Anacondaのの人**
+**Anacondaの人**
 
 ```
 conda install --yes --file requirements.txt
