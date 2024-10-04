@@ -1,9 +1,20 @@
-def kaijo(n):
-    if n == 0:
-        return 1
+def put_line(n):
+    if n > 0:
+        print('*', end='')
+        put_line(n - 1)
     else:
-        return n * kaijo(n-1)
+        print()
+
+
+def put_triangle(n):
+    if n > 0:
+        put_triangle(n - 1)
+        put_line(n)
+
 
 if __name__ == '__main__':
-    for n in range(12):
-        print('{:2d}! = {:10d}'.format(n, kaijo(n)))
+    print("put_triangle(5)")
+    put_triangle(5)
+
+    print("put_triangle(7)")
+    put_triangle(7)
