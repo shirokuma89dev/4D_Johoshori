@@ -1,126 +1,83 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
-# 3次元迷路の定義（0階と4階を壁にする）
-maze = [
-    [
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-    ],  # 0階（全て壁）
-    [
-        [2, 2, 2, 2, 2],
-        [2, 0, 0, 2, 2],
-        [2, 0, 2, 2, 2],
-        [2, 0, 0, 2, 2],
-        [2, 2, 2, 2, 2],
-    ],  # 1階
-    [
-        [2, 2, 2, 2, 2],
-        [2, 0, 2, 2, 2],
-        [2, 2, 0, 0, 2],
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-    ],  # 2階
-    [
-        [2, 2, 2, 2, 2],
-        [2, 0, 2, 0, 2],
-        [2, 0, 2, 0, 2],
-        [2, 0, 0, 0, 2],
-        [2, 2, 2, 2, 2],
-    ],  # 3階
-    [
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2],
-    ],  # 4階（全て壁）
-]
-
-# 経路を記録するためのリスト
-route_floor = [0 for _ in range(100)]
-route_row = [0 for _ in range(100)]
-route_col = [0 for _ in range(100)]
-
-# スタックポインタと成功フラグ
-stack_pointer = 0
-found_exit = 0
-
-# スタート位置とゴール位置
-start_floor, start_row, start_col = 1, 1, 1
-end_floor, end_row, end_col = 3, 3, 3
+############ SORTING ALGORITHMS ############
+def normal_quick(a):
+    length = len(a)
+    stack = [(0, length - 1)]
+    while len(stack) > 0:
+        left, right = stack.pop()
+        if left >= right:
+            continue
+        i = left
+        j = right
+        s = a[left + (right - left) // 2]
+        while i < j:
+            while a[i] < s:
+                i += 1
+            while a[j] > s:
+                j -= 1
+            if i < j:
+                if a[i] == a[j]:
+                    j -= 1
+                else:
+                    a[i], a[j] = a[j], a[i]
+        stack.append((j + 1, right))
+        stack.append((left, i - 1))
 
 
-def visit(floor, row, col):
-    global found_exit, result, stack_pointer
-    maze[floor][row][col] = 1  # 現在の位置を訪問済みにする
-    route_floor[stack_pointer] = floor
-    route_row[stack_pointer] = row
-    route_col[stack_pointer] = col
+def recursive_quick(arr, left, right):
+    if left < right:
+        pivot = arr[left]
+        low = left
+        high = right + 1
 
-    stack_pointer += 1
+        while True:
+            low += 1
+            while low <= right and arr[low] < pivot:
+                low += 1
+            high -= 1
+            while arr[high] > pivot:
+                high -= 1
+            if low >= high:
+                break
 
-    # ゴールに到達した場合
-    if floor == end_floor and row == end_row and col == end_col:
-        for k in range(stack_pointer):
-            result += "({:d},{:d},{:d})".format(
-                route_floor[k], route_row[k], route_col[k]
-            )
-        found_exit = 1
+            # Swap elements at low and high
+            arr[low], arr[high] = arr[high], arr[low]
 
-    # 右方向に移動
-    if found_exit != 1 and maze[floor][row][col + 1] == 0:
-        visit(floor, row, col + 1)
-    # 下方向に移動
-    if found_exit != 1 and maze[floor][row + 1][col] == 0:
-        visit(floor, row + 1, col)
-    # 左方向に移動
-    if found_exit != 1 and maze[floor][row][col - 1] == 0:
-        visit(floor, row, col - 1)
-    # 上方向に移動
-    if found_exit != 1 and maze[floor][row - 1][col] == 0:
-        visit(floor, row - 1, col)
-    # 下の階に移動
-    if found_exit != 1 and floor > 0 and maze[floor - 1][row][col] == 0:
-        visit(floor - 1, row, col)
-    # 上の階に移動
-    if found_exit != 1 and floor < len(maze) - 1 and maze[floor + 1][row][col] == 0:
-        visit(floor + 1, row, col)
+        # Place pivot in the correct position
+        arr[left], arr[high] = arr[high], arr[left]
 
-    stack_pointer -= 1
+        # Recursively sort the left and right subarrays
+        recursive_quick(arr, left, high - 1)
+        recursive_quick(arr, high + 1, right)
 
-    return found_exit
+############ MAIN ############
 
+import random
+import time
 
-def plot_maze(maze):
-    floors = len(maze)
-    fig, axes = plt.subplots(1, floors, figsize=(10, 3))
+reqursive_time = []
+normal_time = []
 
-    for f in range(floors):
-        ax = axes[f]
-        # 壁を黒、通路を白に設定し、行列を転置して描画
-        color_map = np.where(np.array(maze[f]) == 2, 0, 1)
+for trial in range(10):
+    print(trial + 1, "回目")
 
-        ax.imshow(
-            color_map, cmap="gray", origin="upper"
-        )  # originは"upper"にして座標系に合わせる
-        ax.set_title(f"Floor {f}")
-        ax.set_xticks([])
-        ax.set_yticks([])
+    rand = []  # 空のリストを作成
 
-    plt.tight_layout()
-    plt.show()
+    for i in range(1000000):  # 乱数の個数を指定
+        rand.append(random.randint(1, 10000000))
 
+    recursive_start = time.time()
+    recursive_quick(rand, 0, len(rand) - 1)
+    recursive_end = time.time()
+    reqursive_time.append(recursive_end - recursive_start)
+    print("再帰関数:", rand[:4], "時間:", reqursive_time[trial])
 
-plot_maze(maze)  # For debug
+    normal_start = time.time()
+    normal_quick(rand)
+    normal_end = time.time()
+    normal_time.append(normal_end - normal_start)
+    print("通常関数:", rand[:4], "時間:", normal_time[trial])
+    print("")
 
-print("3次元迷路の探索")
-result = ""
-
-if visit(start_floor, start_row, start_col):
-    print(result)
-else:
-    print("出口が見つかりません")
+print("### result ###")
+print("再帰関数（平均）:", sum(reqursive_time) / len(reqursive_time))
+print("通常関数（平均）:", sum(normal_time) / len(normal_time))
