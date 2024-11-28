@@ -1,34 +1,59 @@
-def find_matching_bracket_index(bracket_string, num):
-    MAX_SIZE = 128
-    stack = [0 for _ in range(MAX_SIZE)]
-    stack_pointer = 0
+class Node():
+    def __init__(self, data, next_node=None):
+        self.data = data
+        self.next = next_node
+    
+class LinkedList():
+    def __init__(self, head=None):
+        self.head = head
+    
+    def append(self, data):
+        new_node = Node(data)
+        if self.head is None:
+            self.head = new_node
+        else:
+            next_node = self.head
+            while next_node.next is not None:
+                next_node = next_node.next
+            next_node.next = new_node
+    
+    def pop(self):
+        if self.head is None:
+            return None
+        current = self.head
+        if current.next is None:
+            self.head = None
+            return current.data
+        while current.next.next is not None:
+            previous = current
+            current = current.next
+        previous.next = None
+        return current.data
+    def pop(self):
+        if self.head is None:
+            return None
+        current = self.head
+        if current.next is None:
+            self.head = None
+            return current.data
+        while current.next.next is not None:
+            previous = current
+            current = current.next
+        previous.next = None
+        return current.data
 
-    for index in range(len(bracket_string)):
-        char = bracket_string[index]
-        if char == "(":
-            stack[stack_pointer] = index
-            stack_pointer += 1
-        elif char == ")":
-            stack_pointer -= 1
-            if stack_pointer < 0:
-                return None
-            if stack[stack_pointer] == num:
-                return index
-            if index == num:
-                return stack[stack_pointer]
+stack = LinkedList()
+stack.append('A')
+stack.append(10)
+stack.append('abc')
 
-    return None
+current = stack.head
+i = 0
+while current is not None:
+    print('data[{:d}]: {}'.format(i, current.data))
+    current = current.next
+    i += 1
 
-
-bracket_string = "((()(()())))"
-num = 3
-
-matching_bracket_index = find_matching_bracket_index(bracket_string, num)
-print(
-    num,
-    "番目の括弧に対応する括弧は",
-    matching_bracket_index,
-    "番目の",
-    bracket_string[matching_bracket_index],
-    "です。",
-)
+print('-----------------')
+while stack.head is not None:
+    print('pop={}'.format(stack.pop()))
