@@ -1,59 +1,44 @@
-class Node():
-    def __init__(self, data, next_node=None):
-        self.data = data
-        self.next = next_node
-    
-class LinkedList():
-    def __init__(self, head=None):
-        self.head = head
-    
-    def append(self, data):
-        new_node = Node(data)
-        if self.head is None:
-            self.head = new_node
+from linked_list import LinkedList
+from linked_list import Node
+
+def ordering(linked_list):
+    sorted_list = LinkedList()  # 昇順にデータを格納する新しいリストを作成
+    current = linked_list.head  # 元のリストの先頭から開始
+
+    while current is not None:
+        data = current.data
+        if sorted_list.head is None or data < sorted_list.head.data:
+            # 新しいリストが空か、先頭より小さい場合は先頭に追加
+            sorted_list.head = Node(data, sorted_list.head)
         else:
-            next_node = self.head
-            while next_node.next is not None:
-                next_node = next_node.next
-            next_node.next = new_node
-    
-    def pop(self):
-        if self.head is None:
-            return None
-        current = self.head
-        if current.next is None:
-            self.head = None
-            return current.data
-        while current.next.next is not None:
-            previous = current
-            current = current.next
-        previous.next = None
-        return current.data
-    def pop(self):
-        if self.head is None:
-            return None
-        current = self.head
-        if current.next is None:
-            self.head = None
-            return current.data
-        while current.next.next is not None:
-            previous = current
-            current = current.next
-        previous.next = None
-        return current.data
+            # 適切な位置を探して挿入
+            sorted_current = sorted_list.head
+            while sorted_current.next is not None and sorted_current.next.data < data:
+                sorted_current = sorted_current.next
+            sorted_current.next = Node(data, sorted_current.next)
+        current = current.next
 
-stack = LinkedList()
-stack.append('A')
-stack.append(10)
-stack.append('abc')
+    linked_list.head = sorted_list.head  # 元のリストの先頭を更新
 
-current = stack.head
-i = 0
+
+original_list = LinkedList()
+original_list.append(3)
+original_list.append(1)
+original_list.append(4)
+original_list.append(2)
+
+print("Before ordering:")
+current = original_list.head
 while current is not None:
-    print('data[{:d}]: {}'.format(i, current.data))
+    print(current.data, end=" -> ")
     current = current.next
-    i += 1
+print("End of list")
 
-print('-----------------')
-while stack.head is not None:
-    print('pop={}'.format(stack.pop()))
+ordering(original_list)
+
+print("After ordering:")
+current = original_list.head
+while current is not None:
+    print(current.data, end=" -> ")
+    current = current.next
+print("End of list")
